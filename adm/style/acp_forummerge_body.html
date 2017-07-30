@@ -13,10 +13,45 @@
 
 <form id="acp_forum_merge" method="post" action="{U_ACTION}">
 
-    <!-- IF S_CONNECTION_SUCCESSFUL -->
+    <!-- IF S_CONNECTION_CHECK_PASSED -->
     <div class="successbox">
         <p>
             {L_SOURCE_CONNECTION_SUCCESSFUL}
+        </p>
+    </div>
+    <fieldset>
+        <legend>{L_USER_MAPPING_SUMMARY}</legend>
+        <p><strong>{L_USER_MAPPING_SUMMARY_INSTRUCTIONS}</strong></p>
+        <dl>
+            <dt>{L_MATCHED_USERS}{L_COLON}</dt>
+            <dd>{MATCHED_USERS}</dd>
+        </dl>
+        <dl>
+            <dt>{L_USERS_TO_ADD}{L_COLON}</dt>
+            <dd>{ADDING_USERS}</dd>
+        </dl>
+    </fieldset>
+    <fieldset>
+        <legend>{L_FORUM_MAPPING}</legend>
+        <p><strong>{L_FORUM_MAPPING_INSTRUCTIONS}</strong></p>
+        <hr />
+        <dl>
+            <dt><i><b>{L_SOURCE_FORUM_NAME}</b></i></dt>
+            <dd><i><b>{L_TARGET_FORUM_NAME}</b></i></dd>
+        </dl>
+        <hr />
+        <!-- BEGIN forummapping -->
+        <dl>
+            <dt>{forummapping.SOURCE_FORUM_NAME}</dt>
+            <dd>{forummapping.TARGET_FORUM_LIST}</dd>
+        </dl>
+        <hr />
+        <!-- END forummapping -->
+    </fieldset>
+    <!-- ELSEIF S_MERGE_READY -->
+    <div class="warningbox">
+        <p>
+            {L_MERGE_IS_READY}
         </p>
     </div>
     <!-- ELSE -->
@@ -39,13 +74,16 @@
             <dd>{TARGET_DB_NAME}</dd>
         </dl>
 	</fieldset>
-
-	<fieldset class="submit-buttons">
-		<input class="button1" type="submit" id="continue" name="continue" value="{L_CONTINUE_MERGE}" />&nbsp;
-		{S_FORM_TOKEN}
-	</fieldset>
     <!-- ENDIF -->
-
+    <fieldset class="submit-buttons">
+        <input class="button1" type="submit" id="{BUTTON_NAME_ID}" name="{BUTTON_NAME_ID}" value="{BUTTON_TEXT}" />&nbsp;
+        {S_FORM_TOKEN}
+        <!-- IF BUTTON_NAME_ID != 'continue' -->
+        <input type="hidden" name="source_db_name" value="{SOURCE_DB_NAME}" />
+        <input type="hidden" name="source_db_username" value="{SOURCE_DB_USERNAME}" />
+        <input type="hidden" name="source_db_password" value="{SOURCE_DB_PASSWORD}" />
+        <!-- ENDIF -->
+    </fieldset>
 </form>
 
 <!-- INCLUDE overall_footer.html -->
