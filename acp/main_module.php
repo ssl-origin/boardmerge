@@ -187,29 +187,29 @@ class main_module
 	{
 		// Check users to see which ones match between the two databases
 		$matched_users = $adding_users = 0;
-		$result = $db->sql_query("SELECT user_id, username, username_clean, user_email FROM " . USERS_TABLE);
+		$result = $db->sql_query("SELECT user_id, username_clean, user_email FROM " . USERS_TABLE);
 		$target_users = $db->sql_fetchrowset($result);
 		$db->sql_freeresult($result);
 
-		$result = $dbal_source->sql_query("SELECT user_id, username, username_clean, user_email
-																FROM {$table_prefix}users
-																WHERE user_lastvisit > 0 AND (user_posts > 0 OR user_new_privmsg > 0
-																	OR user_unread_privmsg > 0 OR user_last_privmsg > 0)");
+		$result = $dbal_source->sql_query("SELECT *
+											FROM {$table_prefix}users
+											WHERE user_lastvisit > 0 AND (user_posts > 0 OR user_new_privmsg > 0
+												OR user_unread_privmsg > 0 OR user_last_privmsg > 0)");
 
 		while ($row = $dbal_source->sql_fetchrow($result))
 		{
-			$matching_user_id = array_search($row['username_clean'], array_column($target_users, 'username_clean', 'user_id'));
-			if ($matching_user_id === false)
+			$target_user_id = array_search($row['username_clean'], array_column($target_users, 'username_clean', 'user_id'));
+			if ($target_user_id === false)
 			{
-				$matching_user_id = array_search($row['user_email'], array_column($target_users, 'user_email', 'user_id'));
+				$target_user_id = array_search($row['user_email'], array_column($target_users, 'user_email', 'user_id'));
 			}
-			if ($matching_user_id !== false)
+			if ($target_user_id !== false)
 			{
 				$matched_users++;
 				if ($prepare)
 				{
 					$dbal_source->sql_query("UPDATE {$table_prefix}users
-											SET target_user_id = $matching_user_id
+											SET target_user_id = $target_user_id
 											WHERE user_id = {$row['user_id']}");
 				}
 			}
