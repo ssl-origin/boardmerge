@@ -19,6 +19,7 @@
             {L_SOURCE_CONNECTION_SUCCESSFUL}
         </p>
     </div>
+    <!-- ELSEIF S_MAPPING_PREP -->
     <fieldset>
         <legend>{L_USER_MAPPING_SUMMARY}</legend>
         <p><strong>{L_USER_MAPPING_SUMMARY_INSTRUCTIONS}</strong></p>
@@ -78,11 +79,12 @@
     <fieldset class="submit-buttons">
         <input class="button1" type="submit" id="{BUTTON_NAME_ID}" name="{BUTTON_NAME_ID}" value="{BUTTON_TEXT}" />&nbsp;
         {S_FORM_TOKEN}
-        <!-- IF BUTTON_NAME_ID != 'continue' -->
+        <!-- IF BUTTON_NAME_ID != 'continue1' -->
         <input type="hidden" name="source_db_name" value="{SOURCE_DB_NAME}" />
         <input type="hidden" name="source_db_username" value="{SOURCE_DB_USERNAME}" />
         <input type="hidden" name="source_db_password" value="{SOURCE_DB_PASSWORD}" />
         <!-- ENDIF -->
+        <input type="hidden" name="source_table_prefix" value="{SOURCE_TABLE_PREFIX}" />
     </fieldset>
 </form>
 

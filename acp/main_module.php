@@ -23,8 +23,8 @@ class main_module
 	{
 		global $config, $request, $template, $user, $db, $dbms, $dbhost, $dbname, $dbuser, $phpbb_container;
 
-		$button_name_id = 'continue';
-		$button_text = $user->lang['CONTINUE_MERGE'];
+		$button_name_id = 'continue1';
+		$button_text = 'CONTINUE_MERGE';
 		$forum_merge_error = false;
 		$this->tpl_name = 'acp_forummerge_body';
 		$this->page_title = $user->lang['ACP_FORUM_MERGE_TITLE'];
@@ -33,14 +33,14 @@ class main_module
 		$source_db_name = $request->variable('source_db_name', '');
 		$source_db_username = $request->variable('source_db_username', $dbuser);
 		$source_db_password = $request->variable('source_db_password', '');
-		$table_prefix = $request->variable('table_prefix', '');
+		$table_prefix = $request->variable('source_table_prefix', '');
 
 		if (strpos($dbms, 'phpbb\db\driver') === false && class_exists('phpbb\db\driver\\' . $dbms))
 		{
 			$dbms = 'phpbb\db\driver\\' . $dbms;
 		}
 
-		if ($request->is_set_post('continue'))
+		if ($request->is_set_post('continue1'))
 		{
 			if (!check_form_key('davidiq/forummerge'))
 			{
@@ -82,42 +82,56 @@ class main_module
 						}
 						else
 						{
-							$compare_results = $this->compare_users($dbal_source, $table_prefix, $db, false);
-
-							// Let's show the forum breakdown and try to match what is in the source DB to what is in the target DB
-							// Admin will select what the target forums will be.
-							$target_forums = make_forum_select(false, false, true, true, true, false, true);
-							$sql = "SELECT DISTINCT f.forum_id, f.forum_name
-									FROM {$table_prefix}forums f
-									JOIN {$table_prefix}topics t ON t.forum_id = f.forum_id
-									WHERE f.forum_type = " . FORUM_POST;
-							$result = $dbal_source->sql_query($sql);
-							while ($row = $dbal_source->sql_fetchrow($result))
-							{
-								$template->assign_block_vars('forummapping', array(
-									'SOURCE_FORUM_NAME'		=> $row['forum_name'],
-									'TARGET_FORUM_LIST'		=> $this->build_target_forum_list($target_forums, $row)
-								));
-							}
-							$dbal_source->sql_freeresult($result);
+							// TODO: Add target_forum_id column to source db forums table
+							// TODO: Add target_user_id column to source db users table
+							// TODO: Add target_topic_id column to source db topics table
 
 							$template->assign_vars(array(
-								'MATCHED_USERS'				=> $compare_results['matched_users'],
-								'ADDING_USERS'				=> $compare_results['adding_users'],
 								'S_CONNECTION_CHECK_PASSED'	=> true,
 							));
 
-							$button_name_id = 'prepare';
-							$button_text = $user->lang['PREPARE_MERGE'];
+							$button_name_id = 'continue2';
+							$button_text = 'CONTINUE_MERGE';
 						}
 					}
 				}
 			}
 		}
+		elseif ($request->is_set_post('continue2'))
+		{
+			$dbal_source = new $dbms();
+			if (!is_array($dbal_source->sql_connect($dbhost, $source_db_username, $source_db_password, $source_db_name)))
+			{
+				$compare_results = $this->compare_users($dbal_source, $table_prefix, $db, false);
+
+				// Let's show the forum breakdown and try to match what is in the source DB to what is in the target DB
+				// Admin will select what the target forums will be.
+				$target_forums = make_forum_select(false, false, true, true, true, false, true);
+				$sql = "SELECT DISTINCT f.forum_id, f.forum_name
+									FROM {$table_prefix}forums f
+									JOIN {$table_prefix}topics t ON t.forum_id = f.forum_id
+									WHERE f.forum_type = " . FORUM_POST;
+				$result = $dbal_source->sql_query($sql);
+				while ($row = $dbal_source->sql_fetchrow($result)) {
+					$template->assign_block_vars('forummapping', array(
+						'SOURCE_FORUM_NAME' => $row['forum_name'],
+						'TARGET_FORUM_LIST' => $this->build_target_forum_list($target_forums, $row)
+					));
+				}
+				$dbal_source->sql_freeresult($result);
+
+				$template->assign_vars(array(
+					'MATCHED_USERS' => $compare_results['matched_users'],
+					'ADDING_USERS' => $compare_results['adding_users'],
+					'S_MAPPING_PREP' => true,
+				));
+
+				$button_name_id = 'prepare';
+				$button_text = 'PREPARE_MERGE';
+			}
+		}
 		elseif ($request->is_set_post('prepare'))
 		{
-			// TODO: Add target_forum_id column to source db forums table
-			// TODO: Add target_user_id column to source db users table
 			// TODO: Get the form keys for mapping the source forum to the target forum
 			// TODO: Assign target_forum_id and target_user_id
 
@@ -126,7 +140,7 @@ class main_module
 			));
 
 			$button_name_id = 'run';
-			$button_text = $user->lang['RUN_MERGE'];
+			$button_text = 'RUN_MERGE';
 		}
 
 		if (!$forum_merge_error && $request->is_set_post('run'))
@@ -142,10 +156,11 @@ class main_module
 		$template->assign_vars(array(
 			'U_ACTION'					=> $this->u_action,
 			'BUTTON_NAME_ID'			=> $button_name_id,
-			'BUTTON_TEXT'				=> $button_text,
+			'BUTTON_TEXT'				=> $user->lang[$button_text],
 			'SOURCE_DB_NAME'			=> $source_db_name,
 			'SOURCE_DB_USERNAME'		=> $source_db_username,
 			'SOURCE_DB_PASSWORD'		=> $source_db_password,
+			'SOURCE_TABLE_PREFIX'		=> $table_prefix,
 			'TARGET_DB_NAME'			=> $dbname,
 			'FORUM_MERGE_ERROR'			=> $forum_merge_error,
 			'FORUM_MERGE_INSTRUCTIONS'	=> sprintf($user->lang['ACP_FORUM_MERGE_INSTRUCTIONS'], $config['version']),
