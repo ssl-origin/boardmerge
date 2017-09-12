@@ -82,9 +82,14 @@ class main_module
 						}
 						else
 						{
-							// TODO: Add target_forum_id column to source db forums table
-							// TODO: Add target_user_id column to source db users table
-							// TODO: Add target_topic_id column to source db topics table
+							$factory = new \phpbb\db\tools\factory();
+							$db_tools = $factory->get($dbal_source);
+
+							$db_tools->sql_column_add($table_prefix . 'forums', 'target_forum_id', array('UINT', 0), true);
+
+							$db_tools->sql_column_add($table_prefix . 'users', 'target_user_id', array('UINT', 0), true);
+
+							$db_tools->sql_column_add($table_prefix . 'topics', 'target_topic_id', array('UINT', 0), true);
 
 							$template->assign_vars(array(
 								'S_CONNECTION_CHECK_PASSED'	=> true,
