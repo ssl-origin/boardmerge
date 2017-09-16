@@ -11,7 +11,7 @@
 </div>
 <!-- ENDIF -->
 
-<form id="acp_forum_merge" method="post" action="{U_ACTION}">
+<form id="acp_forum_merge" method="post" action="<!-- IF U_ACTION_PROCESSING -->{U_ACTION_PROCESSING}<!-- ELSE -->{U_ACTION}<!-- ENDIF -->">
 
     <!-- IF S_CONNECTION_CHECK_PASSED -->
     <div class="successbox">
@@ -55,6 +55,15 @@
             {L_MERGE_IS_READY}
         </p>
     </div>
+    <!-- ELSEIF S_PROCESSING -->
+    <div class="warningbox">
+        <p>
+            {L_PROCESSING_NO_INTERRUPT}
+        </p>
+    </div>
+    <div class="notice" style="padding:5px">
+        <b>{PROCESSING_MESSAGE}</b>
+    </div>
     <!-- ELSE -->
 	<fieldset>
 		<legend>{L_SETTINGS}</legend>
@@ -76,16 +85,23 @@
         </dl>
 	</fieldset>
     <!-- ENDIF -->
+    <!-- IF not S_PROCESSING -->
     <fieldset class="submit-buttons">
         <input class="button1" type="submit" id="{BUTTON_NAME_ID}" name="{BUTTON_NAME_ID}" value="{BUTTON_TEXT}" />&nbsp;
-        {S_FORM_TOKEN}
-        <!-- IF BUTTON_NAME_ID != 'continue1' -->
-        <input type="hidden" name="source_db_name" value="{SOURCE_DB_NAME}" />
-        <input type="hidden" name="source_db_username" value="{SOURCE_DB_USERNAME}" />
-        <input type="hidden" name="source_db_password" value="{SOURCE_DB_PASSWORD}" />
-        <!-- ENDIF -->
-        <input type="hidden" name="source_table_prefix" value="{SOURCE_TABLE_PREFIX}" />
     </fieldset>
+    <!-- ENDIF -->
+    {S_FORM_TOKEN}
+    <input type="hidden" name="source_db_name" value="{SOURCE_DB_NAME}" />
+    <input type="hidden" name="source_db_username" value="{SOURCE_DB_USERNAME}" />
+    <input type="hidden" name="source_db_password" value="{SOURCE_DB_PASSWORD}" />
+    <input type="hidden" name="source_table_prefix" value="{SOURCE_TABLE_PREFIX}" />
 </form>
 
+<!-- IF S_PROCESSING -->
+<script>
+    setTimeout(function () {
+        document.getElementById('acp_forum_merge').submit();
+    }, 2000);
+</script>
+<!-- ENDIF -->
 <!-- INCLUDE overall_footer.html -->

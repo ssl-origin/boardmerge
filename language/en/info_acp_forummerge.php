@@ -23,7 +23,7 @@ $lang = array_merge($lang, array(
 	'ACP_FORUM_MERGE_MAIN'			=> 'Main',
 
 	'ACP_FORUM_MERGE_INSTRUCTIONS'	=> 'Use this tool to merge a %s forum`s database (versions must match) into the current forum where the tool is being used from.',
-	'ACP_FORUM_MERGE_COMPLETED'		=> 'Forum merging has completed!',
+
 	'SOURCE_DB_NAME'				=> 'Source database name',
 	'SOURCE_DB_NAME_EXPLAIN'		=> 'The name of the database on the server from which to copy data from.',
 	'SOURCE_DB_USERNAME'			=> 'Source database username',
@@ -45,6 +45,11 @@ $lang = array_merge($lang, array(
 	'MATCHED_USERS'					=> 'Matched users',
 	'USERS_TO_ADD'					=> 'Users to add',
 	'MERGE_IS_READY'				=> 'The forum merge is ready to run. Once started this process should NOT be stopped, otherwise you will have incomplete/missing merged data.',
+	'PROCESSING_NO_INTERRUPT'		=> 'Merge is currently being processed. <strong>DO NOT EXIT OR REFRESH THIS PAGE!</strong>',
+	'PROCESSING_USERS'				=> '%d of %d users have been imported.',
+	'USER_PROCESSING_COMPLETE'		=> 'User processing complete. Preparing to process topics and posts.',
+	'PROCESSING_TOPICS'				=> '%d of %d topics and their posts have been imported.',
+	'TOPIC_PROCESSING_COMPLETE'		=> 'Post processing complete. Users, topics and their posts from %s have been imported.',
 
 	'CONTINUE_MERGE'				=> 'Continue',
 	'PREPARE_MERGE'					=> 'Prepare Merge',
