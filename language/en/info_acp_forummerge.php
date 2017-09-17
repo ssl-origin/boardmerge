@@ -49,7 +49,12 @@ $lang = array_merge($lang, array(
 	'PROCESSING_USERS'				=> '%d of %d users have been imported.',
 	'USER_PROCESSING_COMPLETE'		=> 'User processing complete. Preparing to process topics and posts.',
 	'PROCESSING_TOPICS'				=> '%d of %d topics and their posts have been imported.',
-	'TOPIC_PROCESSING_COMPLETE'		=> 'Post processing complete. Users, topics and their posts from %s have been imported.',
+	'TOPIC_PROCESSING_COMPLETE'		=> 'Topic processing complete. Preparing to re-synchronize stats.',
+	'STAT_SYNC_COMPLETE'			=> 'Statistics have been re-synchronized. Preparing to re-synchronize post counts.',
+	'POST_COUNTS_SYNC_COMPLETE'		=> 'Post counts have been re-synchronized. Preparing to re-synchronize dotted topics.',
+	'DOTTED_TOPICS_SYNC_COMPLETE'	=> 'Dotted topics have been re-synchronized. Preparing to re-synchronize forums.',
+	'PROCESSING_FORUM_SYNC'			=> 'Re-synchronizing <i>%s</i>.<p>%s of %s topics have been synchronized for this forum.</p>',
+	'FORUM_SYNC_COMPLETE'			=> 'Forum sync complete. Users, topics and their posts from %s have been imported and data re-synchronized.',
 
 	'CONTINUE_MERGE'				=> 'Continue',
 	'PREPARE_MERGE'					=> 'Prepare Merge',

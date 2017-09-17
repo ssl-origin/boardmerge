@@ -91,9 +91,11 @@
     </fieldset>
     <!-- ENDIF -->
     {S_FORM_TOKEN}
+    <!-- IF BUTTON_NAME_ID != 'continue1' -->
     <input type="hidden" name="source_db_name" value="{SOURCE_DB_NAME}" />
     <input type="hidden" name="source_db_username" value="{SOURCE_DB_USERNAME}" />
     <input type="hidden" name="source_db_password" value="{SOURCE_DB_PASSWORD}" />
+    <!-- ENDIF -->
     <input type="hidden" name="source_table_prefix" value="{SOURCE_TABLE_PREFIX}" />
 </form>
 
