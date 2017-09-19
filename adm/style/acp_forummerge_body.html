@@ -1,7 +1,7 @@
 <!-- INCLUDE overall_header.html -->
 
 <h1>{L_ACP_FORUM_MERGE_TITLE}</h1>
-<p>{FORUM_MERGE_INSTRUCTIONS}</p>
+<!-- IF not S_PROCESSING --><p>{FORUM_MERGE_INSTRUCTIONS}</p><!-- ENDIF -->
 
 <!-- IF FORUM_MERGE_ERROR -->
 <div class="errorbox">
@@ -55,11 +55,19 @@
             {L_MERGE_IS_READY}
         </p>
     </div>
+    <div class="errorbox">
+        <p>
+            {L_BEFORE_CONTINUING_MERGE}
+        </p>
+    </div>
     <!-- ELSEIF S_PROCESSING -->
     <div class="warningbox">
         <p>
-            {L_PROCESSING_NO_INTERRUPT}
+            {PROCESSING_NO_INTERRUPT}
         </p>
+        <div>
+            <img src="images/progress_bar.gif" alt="{L_MERGE_PROGRESS}" />
+        </div>
     </div>
     <div class="notice" style="padding:5px">
         <b>{PROCESSING_MESSAGE}</b>
@@ -82,7 +90,14 @@
             <dd><input type="password" name="source_db_password" id="source_db_password" value="{SOURCE_DB_PASSWORD}" autocomplete="off" /></dd>
         </dl>
         <dl>
-            <dt><label>{L_TARGET_DB_NAME}{L_COLON}</label></dt>
+            <dt><label for="source_db_table_prefix">{L_SOURCE_DB_TABLE_PREFIX}{L_COLON}</label><br /><span>{L_SOURCE_DB_TABLE_PREFIX_EXPLAIN}</span></dt>
+            <dd>
+                <input type="text" name="source_db_table_prefix" id="source_db_table_prefix" value="{SOURCE_TABLE_PREFIX}" />
+                <input class="button1" type="submit" id="get_table_prefix" name="get_table_prefix" value="{L_GET_TABLE_PREFIX}" />&nbsp
+            </dd>
+        </dl>
+        <dl>
+            <dt><label>{L_TARGET_DB_NAME}{L_COLON}</label><br /><span>{L_TARGET_DB_NAME_EXPLAIN}</span></dt>
             <dd>{TARGET_DB_NAME}</dd>
         </dl>
 	</fieldset>
@@ -99,13 +114,16 @@
     <input type="hidden" name="source_db_password" value="{SOURCE_DB_PASSWORD}" />
     <!-- ENDIF -->
     <input type="hidden" name="source_table_prefix" value="{SOURCE_TABLE_PREFIX}" />
+    <!-- IF PROCESSING_START -->
+    <input type="hidden" name="processing_start" value="{PROCESSING_START}" />
+    <!-- ENDIF -->
 </form>
 
 <!-- IF S_PROCESSING -->
 <script>
     setTimeout(function () {
         document.getElementById('acp_forum_merge').submit();
-    }, 2000);
+    }, 1000);
 </script>
 <!-- ENDIF -->
 <!-- INCLUDE overall_footer.html -->
