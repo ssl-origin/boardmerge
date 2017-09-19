@@ -8,7 +8,7 @@
  *
  */
 
-namespace davidiq\forummerge\migrations;
+namespace davidiq\boardmerge\migrations;
 
 class install_acp_module extends \phpbb\db\migration\migration
 {
@@ -29,7 +29,7 @@ class install_acp_module extends \phpbb\db\migration\migration
 				'acp',
 				'ACP_BOARD_MERGE_TITLE',
 				array(
-					'module_basename'	=> '\davidiq\forummerge\acp\main_module',
+					'module_basename'	=> '\davidiq\boardmerge\acp\main_module',
 					'modes'				=> array('main'),
 				),
 			)),

@@ -8,7 +8,7 @@
  *
  */
 
-namespace davidiq\forummerge\acp;
+namespace davidiq\boardmerge\acp;
 
 /**
  * Board Merge ACP module info.
@@ -23,7 +23,7 @@ class main_info
 			'modes'		=> array(
 				'main'	=> array(
 					'title'	=> 'ACP_BOARD_MERGE_MAIN',
-					'auth'	=> 'ext_davidiq/forummerge && acl_a_board',
+					'auth'	=> 'ext_davidiq/boardmerge && acl_a_board',
 					'cat'	=> array('ACP_BOARD_MERGE_TITLE')
 				),
 			),

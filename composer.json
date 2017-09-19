@@ -1,5 +1,5 @@
 {
-    "name": "davidiq/forummerge",
+    "name": "davidiq/boardmerge",
     "type": "phpbb-extension",
     "description": "Merge 2 phpBB boards",
     "homepage": "https://phpbb.davidiq.com",
