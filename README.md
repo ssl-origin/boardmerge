@@ -1,10 +1,10 @@
-# Forum Merge
+# Board Merge
 
 ## Installation
 
 Copy the extension to phpBB/ext/davidiq/forummerge
 
-Go to "ACP" > "Customise" > "Extensions" and enable the "Forum Merge" extension.
+Go to "ACP" > "Customise" > "Extensions" and enable the "Board Merge" extension.
 
 ## License
 

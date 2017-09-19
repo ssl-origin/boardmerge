@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Forum Merge. An extension for the phpBB Forum Software package.
+ * Board Merge. An extension for the phpBB Forum Software package.
  *
  * @copyright (c) 2017, David Colón, https://www.davidiq.com
  * @license GNU General Public License, version 2 (GPL-2.0)
@@ -19,10 +19,10 @@ if (empty($lang) || !is_array($lang))
 }
 
 $lang = array_merge($lang, array(
-	'ACP_FORUM_MERGE_TITLE'			=> 'Forum Merge',
-	'ACP_FORUM_MERGE_MAIN'			=> 'Main',
+	'ACP_BOARD_MERGE_TITLE'			=> 'Board Merge',
+	'ACP_BOARD_MERGE_MAIN'			=> 'Main',
 
-	'ACP_FORUM_MERGE_INSTRUCTIONS'	=> 'Use this tool to merge a %s forum`s database (versions must match) into the current forum where the tool is being used from.',
+	'ACP_BOARD_MERGE_INSTRUCTIONS'	=> 'Use this tool to merge a %s forum`s database (versions must match) into the current forum where the tool is being used from.',
 
 	'SOURCE_DB_NAME'				=> 'Source database name',
 	'SOURCE_DB_NAME_EXPLAIN'		=> 'The name of the database on the server from which to copy data from.',
@@ -50,7 +50,7 @@ $lang = array_merge($lang, array(
 	'USER_MAPPING_SUMMARY_INSTRUCTIONS'	=> 'This is a summary of the results of the user matching between the two forums. Matching is done on username and email address.',
 	'MATCHED_USERS'					=> 'Matched users',
 	'USERS_TO_ADD'					=> 'Users to add',
-	'MERGE_IS_READY'				=> 'The forum merge is ready to run. Once started this process should NOT be stopped, otherwise you will have incomplete/missing merged data.',
+	'MERGE_IS_READY'				=> 'The board merge is ready to run. Once started this process should NOT be stopped, otherwise you will have incomplete/missing merged data.',
 	'BEFORE_CONTINUING_MERGE'		=> 'FINAL NOTICE: This process will take a long time. Your board will be automatically disabled with a `Maintenance` message displayed. It is recommended that you take a backup of your database prior to continuing as a precaution.',
 	'FORUM_DISABLED_MESSAGE'		=> 'Forum maintenance currently in progress.',
 	'PROCESSING_NO_INTERRUPT'		=> 'Merge is currently being processed. <strong>DO NOT EXIT OR MANUALLY REFRESH THIS PAGE!</strong><p>Elapsed run time: %d minute(s)</p>',
@@ -70,4 +70,6 @@ $lang = array_merge($lang, array(
 	'PREPARE_MERGE'					=> 'Prepare Merge',
 	'RUN_MERGE'						=> 'Run Merge',
 	'MERGE_PROGRESS'				=> 'Merge progress',
+
+	'LOG_BOARD_MERGE_COMPLETE'		=> 'Board merge completed',
 ));

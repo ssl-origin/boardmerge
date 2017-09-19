@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Forum Merge. An extension for the phpBB Forum Software package.
+ * Board Merge. An extension for the phpBB Forum Software package.
  *
  * @copyright (c) 2017, David Colón, https://www.davidiq.com
  * @license GNU General Public License, version 2 (GPL-2.0)
@@ -23,11 +23,11 @@ class install_acp_module extends \phpbb\db\migration\migration
 			array('module.add', array(
 				'acp',
 				'ACP_CAT_DOT_MODS',
-				'ACP_FORUM_MERGE_TITLE'
+				'ACP_BOARD_MERGE_TITLE'
 			)),
 			array('module.add', array(
 				'acp',
-				'ACP_FORUM_MERGE_TITLE',
+				'ACP_BOARD_MERGE_TITLE',
 				array(
 					'module_basename'	=> '\davidiq\forummerge\acp\main_module',
 					'modes'				=> array('main'),
