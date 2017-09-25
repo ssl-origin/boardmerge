@@ -20,6 +20,7 @@
         </p>
     </div>
     <!-- ELSEIF S_MAPPING_PREP -->
+    <!-- IF S_USER_MERGE_SUMMARY -->
     <fieldset>
         <legend>{L_USER_MAPPING_SUMMARY}</legend>
         <p><strong>{L_USER_MAPPING_SUMMARY_INSTRUCTIONS}</strong></p>
@@ -29,9 +30,10 @@
         </dl>
         <dl>
             <dt>{L_USERS_TO_ADD}{L_COLON}</dt>
-            <dd>{ADDING_USERS}</dd>
+            <dd>{USERS_TO_ADD}</dd>
         </dl>
     </fieldset>
+    <!-- ENDIF -->
     <fieldset>
         <legend>{L_FORUM_MAPPING}</legend>
         <p><strong>{L_FORUM_MAPPING_INSTRUCTIONS}</strong></p>
@@ -100,6 +102,12 @@
             <dt><label>{L_TARGET_DB_NAME}{L_COLON}</label><br /><span>{L_TARGET_DB_NAME_EXPLAIN}</span></dt>
             <dd>{TARGET_DB_NAME}</dd>
         </dl>
+        <dl>
+            <dt><label>{L_USER_MERGE_SUMMARY}{L_COLON}</label><br /><span>{L_USER_MERGE_SUMMARY_EXPLAIN}</span></dt>
+            <dd>
+                <input type="checkbox" checked="checked" name="user_merge_summary" />
+            </dd>
+        </dl>
 	</fieldset>
     <!-- ENDIF -->
     <!-- IF not S_PROCESSING -->
@@ -112,6 +120,7 @@
     <input type="hidden" name="source_db_name" value="{SOURCE_DB_NAME}" />
     <input type="hidden" name="source_db_username" value="{SOURCE_DB_USERNAME}" />
     <input type="hidden" name="source_db_password" value="{SOURCE_DB_PASSWORD}" />
+    <input type="hidden" name="user_merge_summary" value="{S_USER_MERGE_SUMMARY}" />
     <!-- ENDIF -->
     <input type="hidden" name="source_table_prefix" value="{SOURCE_TABLE_PREFIX}" />
     <!-- IF PROCESSING_START -->

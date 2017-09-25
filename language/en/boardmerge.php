@@ -19,7 +19,7 @@ if (empty($lang) || !is_array($lang))
 }
 
 $lang = array_merge($lang, array(
-	'ACP_BOARD_MERGE_INSTRUCTIONS'	=> 'Use this tool to merge a %s forum`s database (versions must match) into the current forum where the tool is being used from.',
+	'ACP_BOARD_MERGE_INSTRUCTIONS'	=> 'Use this tool to merge the current %s forum`s database into the current forum where the tool is being used from.',
 
 	'SOURCE_DB_NAME'				=> 'Source database name',
 	'SOURCE_DB_NAME_REQUIRED'		=> 'Source database name is required',
@@ -34,6 +34,8 @@ $lang = array_merge($lang, array(
 	'TABLE_PREFIX_NOT_DETERMINABLE'	=> 'Table prefix could not be determined.',
 	'TABLE_PREFIX_INVALID'			=> 'Table prefix entered is not valid.',
 	'TARGET_DB_NAME'				=> 'Target database name',
+	'USER_MERGE_SUMMARY'			=> 'Show user merge summary',
+	'USER_MERGE_SUMMARY_EXPLAIN'	=> 'Uncheck this option if you experience a route timeout when clicking <em>Continue</em>.',
 	'TARGET_DB_NAME_EXPLAIN'		=> 'This is the current forum`s (the one you are reading this on) database name and is fixed throughout this process.',
 	'SOURCE_DB_CONNECTION_ERROR'	=> '<p>Could not connect to the %s database.</p><p>Error message returned: [%s] %s</p>',
 	'SOURCE_DB_INVALID'				=> 'The source database is either not a valid phpBB database or the database version is lower than 3.1',
