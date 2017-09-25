@@ -3,7 +3,7 @@
     "type": "phpbb-extension",
     "description": "Merge 2 phpBB boards",
     "homepage": "https://phpbb.davidiq.com",
-    "version": "1.0.0-dev",
+    "version": "1.0.0",
     "time": "2017-06-13",
     "license": "GPL-2.0",
     "authors": [

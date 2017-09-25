@@ -8,7 +8,7 @@
  *
  */
 
-namespace davidiq\forummerge\acp;
+namespace davidiq\boardmerge\acp;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -75,17 +75,20 @@ class main_module
 		$this->user = $user;
 		unset($request, $db, $phpEx, $phpbb_root_path, $config, $cache, $auth, $phpbb_container, $phpbb_log, $user);
 
+		$this->user->add_lang_ext('davidiq/boardmerge', 'boardmerge');
+
 		$button_name_id = 'continue1';
 		$button_text = 'CONTINUE_MERGE';
 		$board_merge_error = false;
-		$this->tpl_name = 'acp_forummerge_body';
+		$this->tpl_name = 'acp_boardmerge_body';
 		$this->page_title = $this->user->lang('ACP_BOARD_MERGE_TITLE');
-		add_form_key('davidiq/forummerge');
+		add_form_key('davidiq/boardmerge');
 
 		$source_db_name = $this->request->variable('source_db_name', '');
 		$source_db_username = $this->request->variable('source_db_username', $dbuser);
 		$source_db_password = $this->request->variable('source_db_password', '');
 		$this->table_prefix = $this->request->variable('source_table_prefix', '');
+		$user_merge_summary = $this->request->variable('user_merge_summary', false);
 
 		/** @var \phpbb\db\driver\driver_interface $dbal_source */
 		$dbal_source = null;
@@ -95,16 +98,22 @@ class main_module
 			$dbms = 'phpbb\db\driver\\' . $dbms;
 		}
 
-		$get_table_prefix = $this->request->is_set_post('get_table_prefix');
+		$get_table_prefix = $this->request->is_set('get_table_prefix');
+
+		@set_time_limit(0);
 
 		if ($get_table_prefix || $this->request->is_set_post('continue1'))
 		{
-			if (!check_form_key('davidiq/forummerge'))
+			if (!check_form_key('davidiq/boardmerge'))
 			{
 				trigger_error('FORM_INVALID', E_USER_WARNING);
 			}
 
-			if ($source_db_name == $dbname)
+			if (empty($source_db_name))
+			{
+				$board_merge_error = $this->user->lang('SOURCE_DB_NAME_REQUIRED');
+			}
+			else if ($source_db_name == $dbname)
 			{
 				$board_merge_error = $this->user->lang('SOURCE_DB_NAME_SAME_AS_TARGET');
 			}
@@ -129,7 +138,11 @@ class main_module
 					}
 					else
 					{
-						$this->table_prefix = $this->request->variable('source_db_table_prefix', $this->get_table_prefix($dbal_source));
+						$this->table_prefix = $this->request->variable('source_db_table_prefix', '');
+						if (empty($this->table_prefix))
+						{
+							$this->table_prefix = $this->get_table_prefix($dbal_source);
+						}
 					}
 
 					if ($get_table_prefix)
@@ -165,7 +178,7 @@ class main_module
 							if (!$db_tools->sql_column_exists($this->table_prefix . 'users', 'target_user_id'))
 							{
 								$db_tools->sql_column_add($this->table_prefix . 'users', 'target_user_id', array('UINT', 0), true);
-								$db_tools->sql_create_index($this->table_prefix . 'users', 'tg_usr_id', array('target_user_id'));
+								$db_tools->sql_create_index($this->table_prefix . 'users', 'tg_user_id', array('target_user_id'));
 							}
 
 							if (!$db_tools->sql_column_exists($this->table_prefix . 'topics', 'target_topic_id'))
@@ -187,7 +200,7 @@ class main_module
 		}
 		elseif ($this->request->is_set_post('continue2'))
 		{
-			if (!check_form_key('davidiq/forummerge'))
+			if (!check_form_key('davidiq/boardmerge'))
 			{
 				trigger_error('FORM_INVALID', E_USER_WARNING);
 			}
@@ -196,7 +209,7 @@ class main_module
 
 			if (!is_array($dbal_source->sql_connect($dbhost, $source_db_username, $source_db_password, $source_db_name)))
 			{
-				$compare_results = $this->process_users($dbal_source, false);
+				$compare_results = $user_merge_summary ? $this->process_users($dbal_source, false) : false;
 
 				// Let's show the forum breakdown and try to match what is in the source DB to what is in the target DB
 				// Admin will select what the target forums will be.
@@ -216,8 +229,8 @@ class main_module
 				$dbal_source->sql_freeresult($result);
 
 				$template->assign_vars(array(
-					'MATCHED_USERS' => $compare_results['matched_users'],
-					'ADDING_USERS' => $compare_results['adding_users'],
+					'MATCHED_USERS' => $compare_results !== false ? $compare_results['matched_users'] : false,
+					'USERS_TO_ADD' => $compare_results !== false ? $compare_results['users_to_add'] : false,
 					'S_MAPPING_PREP' => true,
 				));
 
@@ -227,7 +240,7 @@ class main_module
 		}
 		elseif ($this->request->is_set_post('prepare'))
 		{
-			if (!check_form_key('davidiq/forummerge'))
+			if (!check_form_key('davidiq/boardmerge'))
 			{
 				trigger_error('FORM_INVALID', E_USER_WARNING);
 			}
@@ -266,9 +279,8 @@ class main_module
 		if (!$board_merge_error && $action)
 		{
 			$button_name_id = 'processing';
-			@set_time_limit(0);
 
-			if (!check_form_key('davidiq/forummerge'))
+			if (!check_form_key('davidiq/boardmerge'))
 			{
 				trigger_error('FORM_INVALID', E_USER_WARNING);
 			}
@@ -480,7 +492,7 @@ class main_module
 							$this->db->sql_query($sql);
 
 							// Once we've processed this many let's break out to prevent a timeout
-							if ($posts_processed > 3000)
+							if ($posts_processed > 2000)
 							{
 								break;
 							}
@@ -544,24 +556,24 @@ class main_module
 						));
 
 					case 'resync_forums':
-						$forum_index = $this->request->variable('forum_index', 0);
+						$index = $this->request->variable('index', 0);
 
 						$sql = "SELECT DISTINCT target_forum_id
 							FROM {$this->table_prefix}forums
 							WHERE target_forum_id > 0
 							ORDER BY target_forum_id";
 						$result = $dbal_source->sql_query($sql);
-						$target_forum_ids = $dbal_source->sql_fetchrowset($result);
+						$target_forums = $dbal_source->sql_fetchrowset($result);
 						$dbal_source->sql_freeresult($result);
 
-						$target_forum_id = $forum_index < count($target_forum_ids) ? (int) $target_forum_ids[$forum_index] : 0;
+						$target_forum_id = $index < count($target_forums) ? (int) $target_forums[$index]['target_forum_id'] : 0;
 
 						if ($target_forum_id)
 						{
-							$resync_result = $this->resync_forums($target_forum_id, $forum_index);
-							$changed_index = $forum_index !== (int) $resync_result['forum_index'];
-							$forum_index = (int) $resync_result['forum_index'];
-							$target_forum_id = $forum_index < count($target_forum_ids) ? (int) $target_forum_ids[$forum_index] : 0;
+							$resync_result = $this->resync_forums($target_forum_id, $index);
+							$changed_index = $index !== (int) $resync_result['index'];
+							$index = (int) $resync_result['index'];
+							$target_forum_id = $index < count($target_forums) ? (int) $target_forums[$index]['target_forum_id'] : 0;
 
 							if ($target_forum_id)
 							{
@@ -576,7 +588,7 @@ class main_module
 								$u_action = '&amp;' . http_build_query([
 										'process'		=> 1,
 										'action'		=> 'resync_forums',
-										'forum_index'	=> $forum_index,
+										'index'			=> $index,
 										'start'			=> $changed_index ? 0 : $resync_result['start'],
 										'topics_done'	=> $changed_index ? 0 : $resync_result['topics_done'],
 										'total_topics'	=> $changed_index ? 0 : $resync_result['total'],
@@ -638,6 +650,7 @@ class main_module
 			'SOURCE_DB_NAME'			=> $source_db_name,
 			'SOURCE_DB_USERNAME'		=> $source_db_username,
 			'SOURCE_DB_PASSWORD'		=> $source_db_password,
+			'S_USER_MERGE_SUMMARY'		=> $user_merge_summary,
 			'SOURCE_TABLE_PREFIX'		=> $this->table_prefix,
 			'TARGET_DB_NAME'			=> $dbname,
 			'BOARD_MERGE_ERROR'			=> $board_merge_error,
@@ -720,7 +733,7 @@ class main_module
 		}
 
 		// Check users to see which ones match between the two databases
-		$matched_users = $adding_users = 0;
+		$matched_users = $users_to_add = 0;
 		$result = $this->db->sql_query('SELECT user_id, username_clean, user_email FROM ' . USERS_TABLE);
 		$target_users = $this->db->sql_fetchrowset($result);
 		$this->db->sql_freeresult($result);
@@ -802,14 +815,12 @@ class main_module
 		{
 			$result = $dbal_source->sql_query($sql);
 		}
-		$source_users = $dbal_source->sql_fetchrowset($result);
-		$dbal_source->sql_freeresult($result);
 
 		$factory = new \phpbb\db\tools\factory();
 		$db_tools = $factory->get($this->db);
 		$target_users_columns = $db_tools->sql_list_columns(USERS_TABLE);
 
-		foreach ($source_users as $row)
+		while ($row = $dbal_source->sql_fetchrow($result))
 		{
 			$target_user_id = (int) $row['target_user_id'];
 
@@ -824,7 +835,7 @@ class main_module
 
 			if ($target_user_id === false)
 			{
-				$adding_users++;
+				$users_to_add++;
 				if ($merge)
 				{
 					$sql_ary = $this->get_data_for_insert($row, $target_users_columns);
@@ -857,10 +868,11 @@ class main_module
 				}
 			}
 		}
+		$dbal_source->sql_freeresult($result);
 
 		return [
 			'matched_users'		=> $matched_users,
-			'adding_users'		=> $adding_users,
+			'users_to_add'		=> $users_to_add,
 		];
 	}
 
@@ -1085,10 +1097,10 @@ class main_module
 	 * Re-synchronize forums
 	 *
 	 * @param $forum_id int The forum ID for which the sync needs to be performed
-	 * @param $forum_index int The index number in the forum_id list to process
+	 * @param $index int The index number in the forum_id list to process
 	 * @return array Results of re-synchronization
 	 */
-	protected function resync_forums($forum_id, $forum_index)
+	protected function resync_forums($forum_id, $index)
 	{
 		$sql = 'SELECT forum_name, (forum_topics_approved + forum_topics_unapproved + forum_topics_softdeleted) AS total_topics
 					FROM ' . FORUMS_TABLE . "
@@ -1137,7 +1149,7 @@ class main_module
 
 				return [
 					'forum_name'	=> $row['forum_name'],
-					'forum_index'	=> $forum_index,
+					'index'			=> $index,
 					'start'			=> $start,
 					'topics_done'	=> $topics_done,
 					'total'			=> $row['total_topics'],
@@ -1147,11 +1159,11 @@ class main_module
 			sync('forum', 'forum_id', $forum_id, false, true);
 		}
 
-		$forum_index++;
+		$index++;
 
 		return [
 			'forum_name'	=> isset($row['forum_name']) ? $row['forum_name'] : '',
-			'forum_index'	=> $forum_index,
+			'index'			=> $index,
 			'start'			=> 0,
 			'topics_done'	=> 0,
 			'total'			=> isset($row['total_topics']) ? $row['total_topics'] : '',
