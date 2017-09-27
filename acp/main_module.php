@@ -1157,6 +1157,30 @@ class main_module
 			}
 
 			sync('forum', 'forum_id', $forum_id, false, true);
+
+			// The sync function goes off of the post_id instead of post_time to get latest post so we'll need to fix that
+			$sql = 'SELECT 	topic_last_post_id,
+							topic_last_poster_id,
+							topic_last_post_subject,
+							topic_last_poster_name,
+							topic_last_poster_colour,
+							MAX(topic_last_post_time) AS topic_last_post_time
+					FROM ' . TOPICS_TABLE . "
+					WHERE forum_id = $forum_id AND topic_visibility = " . ITEM_APPROVED;
+
+			$result = $this->db->sql_query_limit($sql, 1);
+			$latest_topic = $this->db->sql_fetchrow($result);
+			$this->db->sql_freeresult($result);
+
+			$sql = 'UPDATE ' . FORUMS_TABLE . ' SET ' . $this->db->sql_build_array('UPDATE', array(
+						'forum_last_post_id'		=> $latest_topic['topic_last_post_id'],
+						'forum_last_poster_id'		=> $latest_topic['topic_last_poster_id'],
+						'forum_last_post_subject'	=> $latest_topic['topic_last_post_subject'],
+						'forum_last_post_time'		=> $latest_topic['topic_last_post_time'],
+						'forum_last_poster_name'	=> $latest_topic['topic_last_poster_name'],
+						'forum_last_poster_colour'	=> $latest_topic['topic_last_poster_colour'],
+				)) . " WHERE forum_id = $forum_id";
+			$this->db->sql_query($sql);
 		}
 
 		$index++;
